@@ -1,0 +1,207 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Aptos Dashboard API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health Check",
+        "responses": {
+          "200": {
+            "description": "Healthy"
+          }
+        }
+      }
+    },
+    "/api/resource": {
+      "get": {
+        "summary": "Rate Limited Resource",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/api/providers": {
+      "get": {
+        "summary": "Get latest stat of all providers",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "provider": { "type": "string" },
+                      "total_tvl": { "type": "number", "format": "float" },
+                      "total_volume_1d": { "type": "number", "format": "float" },
+                      "total_volume_7d": { "type": "number", "format": "float" },
+                      "total_volume_30d": { "type": "number", "format": "float" },
+                      "avg_fees_1d": { "type": "number", "format": "float" },
+                      "avg_fees_7d": { "type": "number", "format": "float" },
+                      "avg_fees_30d": { "type": "number", "format": "float" },
+                      "total_pools": { "type": "integer" },
+                      "avg_tvl_per_pool": { "type": "number", "format": "float" },
+                      "avg_slippage_1d": { "type": "number", "format": "float" },
+                      "avg_slippage_7d": { "type": "number", "format": "float" },
+                      "avg_slippage_30d": { "type": "number", "format": "float" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/providers/{provider_name}": {
+      "get": {
+        "summary": "Get provider by name",
+        "parameters": [
+          {
+            "name": "provider_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "THALASWAP"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/pool/{pool_address}/current": {
+      "get": {
+        "summary": "Get current pool data",
+        "parameters": [
+          {
+            "name": "pool_address",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "0x190d44266241744264b964a37b8f09863167a12d3e70cda39376cfb4e3561e12::liquidity_pool::LiquidityPool<0xf22bede237a07e121b56d91a491eb7bcdfd1f5907926a9e58338f964a01b17fa::asset::USDC,0x1::aptos_coin::AptosCoin,0x190d44266241744264b964a37b8f09863167a12d3e70cda39376cfb4e3561e12::curves::Uncorrelated>"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          },
+          "404": {
+            "description": "Pool not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/pools": {
+      "get": {
+        "summary": "Get all current pools",
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/pool/{pool_address}/history": {
+      "get": {
+        "summary": "Get pool history",
+        "parameters": [
+          {
+            "name": "pool_address",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "0x190d44266241744264b964a37b8f09863167a12d3e70cda39376cfb4e3561e12::liquidity_pool::LiquidityPool<0xf22bede237a07e121b56d91a491eb7bcdfd1f5907926a9e58338f964a01b17fa::asset::USDC,0x1::aptos_coin::AptosCoin,0x190d44266241744264b964a37b8f09863167a12d3e70cda39376cfb4e3561e12::curves::Uncorrelated>"
+            }
+          },
+          {
+            "name": "range",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["day", "week", "month"],
+              "default": "day"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Invalid time range"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/top": {
+      "get": {
+        "summary": "Get top 10 pools",
+        "parameters": [
+          {
+            "name": "metric",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["tvl", "volume_day", "fees_day"],
+              "default": "tvl"
+            },
+            "description": "The metric to sort by. Can be 'tvl', 'volume_day', or 'fees_day'. Defaults to 'tvl'."
+          },
+          {
+            "name": "provider",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "THALASWAP"
+            },
+            "description": "The provider to filter by. If not provided, no filtering is applied."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          },
+          "400": {
+            "description": "Invalid metric"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    }
+  }
+}
