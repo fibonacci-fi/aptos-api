@@ -18,9 +18,10 @@ def create_app():
     db.init_app(app)
     socketio.init_app(app, cors_allowed_origins="*")
 
-    from routes import providers, pools
+    from routes import providers, pools , slippage
     app.register_blueprint(providers.bp)
     app.register_blueprint(pools.bp)
+    app.register_blueprint(slippage.bp)
 
     limiter = Limiter(
         key_func=get_remote_address,  # Make sure this is passed only once

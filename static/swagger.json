@@ -38,19 +38,56 @@
                   "items": {
                     "type": "object",
                     "properties": {
-                      "provider": { "type": "string" },
-                      "total_tvl": { "type": "number", "format": "float" },
-                      "total_volume_1d": { "type": "number", "format": "float" },
-                      "total_volume_7d": { "type": "number", "format": "float" },
-                      "total_volume_30d": { "type": "number", "format": "float" },
-                      "avg_fees_1d": { "type": "number", "format": "float" },
-                      "avg_fees_7d": { "type": "number", "format": "float" },
-                      "avg_fees_30d": { "type": "number", "format": "float" },
-                      "total_pools": { "type": "integer" },
-                      "avg_tvl_per_pool": { "type": "number", "format": "float" },
-                      "avg_slippage_1d": { "type": "number", "format": "float" },
-                      "avg_slippage_7d": { "type": "number", "format": "float" },
-                      "avg_slippage_30d": { "type": "number", "format": "float" }
+                      "provider": {
+                        "type": "string"
+                      },
+                      "total_tvl": {
+                        "type": "number",
+                        "format": "float"
+                      },
+                      "total_volume_1d": {
+                        "type": "number",
+                        "format": "float"
+                      },
+                      "total_volume_7d": {
+                        "type": "number",
+                        "format": "float"
+                      },
+                      "total_volume_30d": {
+                        "type": "number",
+                        "format": "float"
+                      },
+                      "avg_fees_1d": {
+                        "type": "number",
+                        "format": "float"
+                      },
+                      "avg_fees_7d": {
+                        "type": "number",
+                        "format": "float"
+                      },
+                      "avg_fees_30d": {
+                        "type": "number",
+                        "format": "float"
+                      },
+                      "total_pools": {
+                        "type": "integer"
+                      },
+                      "avg_tvl_per_pool": {
+                        "type": "number",
+                        "format": "float"
+                      },
+                      "avg_slippage_1d": {
+                        "type": "number",
+                        "format": "float"
+                      },
+                      "avg_slippage_7d": {
+                        "type": "number",
+                        "format": "float"
+                      },
+                      "avg_slippage_30d": {
+                        "type": "number",
+                        "format": "float"
+                      }
                     }
                   }
                 }
@@ -146,7 +183,11 @@
             "required": false,
             "schema": {
               "type": "string",
-              "enum": ["day", "week", "month"],
+              "enum": [
+                "day",
+                "week",
+                "month"
+              ],
               "default": "day"
             }
           }
@@ -174,7 +215,11 @@
             "required": false,
             "schema": {
               "type": "string",
-              "enum": ["tvl", "volume_day", "fees_day"],
+              "enum": [
+                "tvl",
+                "volume_day",
+                "fees_day"
+              ],
               "default": "tvl"
             },
             "description": "The metric to sort by. Can be 'tvl', 'volume_day', or 'fees_day'. Defaults to 'tvl'."
@@ -196,6 +241,67 @@
           },
           "400": {
             "description": "Invalid metric"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/slippage": {
+      "get": {
+        "summary": "Get slippage data for the Aptos/USDC pair",
+        "parameters": [
+          {
+            "name": "range",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "hour",
+                "week",
+                "month"
+              ],
+              "default": "hour"
+            },
+            "description": "The time range for the query. Can be 'hour', 'week', or 'month'. Defaults to 'hour'."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response with binned slippage data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "pair": {
+                      "type": "string",
+                      "example": "apt-usdc"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "timestamp": {
+                            "type": "string",
+                            "format": "date-time",
+                            "example": "2024-12-12T12:00:00Z"
+                          },
+                          "slippage": {
+                            "type": "number",
+                            "format": "float",
+                            "example": 0.005
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
             "description": "Internal server error"
