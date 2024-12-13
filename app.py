@@ -6,7 +6,7 @@ from flask_limiter.util import get_remote_address
 import os
 import logging
 from flask_swagger_ui import get_swaggerui_blueprint
-
+from flask import redirect
 
 def create_app():
     app = Flask(__name__)
@@ -65,7 +65,8 @@ app = create_app()
 
 @app.route('/')
 def default_route():
-    return "Welcome to the Aptos Dashboard API"
+    # Redirect to Swagger UI
+    return redirect('/api/docs')
 
 @app.route('/api/resource')
 @app.limiter.limit("100 per day")
@@ -75,4 +76,3 @@ def rate_limited_resource():
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 8080))
     socketio.run(app, host='0.0.0.0', port=port, log_output=True, allow_unsafe_werkzeug=True)
-
